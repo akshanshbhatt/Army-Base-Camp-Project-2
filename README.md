@@ -21,21 +21,21 @@ Clone the git
 repository:
 
 ``` sourceCode console
-$ git clone https://github.com/gavindsouza/inventory-management-system.git
-$ cd inventory-management-system
+$ git clone https://github.com/akshanshbhatt/Army-Base-Camp-Project-2.git
+$ cd Army-Base-Camp-Project-2
 ```
 ![](docs/util/1.gif)
 
 Install necessary dependencies
 
 ``` sourceCode console
-$ pip3 install -r requirements.txt
+$ pip install -r requirements.txt
 ```
 
 which is actually the same as
 
 ``` sourceCode console
-$ pip3 install flask
+$ pip install flask
 ```
 ![](docs/util/2.gif)
 
@@ -51,7 +51,7 @@ On the _logistics  page_, movement of products can be performed. It also maintai
 ### Starting Things Up
 
 To run the application, change the current working directory to
-\~/inventory-management-system/inventory/
+\~/Army-Base-Camp-Project-2/
 
 ``` sourceCode console
 $ cd inventory
@@ -60,7 +60,7 @@ $ cd inventory
 run the app by typing the following command in your terminal
 
 ``` sourceCode console
-$ python3 -m flask run
+$ python -m flask run
 ```
 
 ![](docs/util/3.gif)
