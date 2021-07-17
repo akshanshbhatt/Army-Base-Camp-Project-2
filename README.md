@@ -120,3 +120,15 @@ Deleting Products and Locations on the System
 ## License
 
 This code has been released under the [MIT License](LICENSE).
+
+## How to serve on your local
+
+1. open this folder in vscode
+2. create a virtual env if u want ( "python -m venv env" enter this in terminal )
+3. activate it by env/scripts/activate in terminal
+4. select python interpreter
+5. install flask
+6. cd inventory/
+7. run it by "$env:FLASK_APP="app" in terminal
+8. "flask run" in terminal
+9. goto localhost
