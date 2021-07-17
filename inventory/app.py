@@ -6,6 +6,7 @@ import sqlite3
 # imports - third party imports
 from flask import Flask, url_for, request, redirect
 from flask import render_template as render
+import flask_login
 
 # global constants
 DATABASE_NAME = 'inventory.sqlite'
@@ -16,6 +17,86 @@ app.config.from_mapping(
     SECRET_KEY='dev',
     DATABASE=os.path.join(app.instance_path, 'database', DATABASE_NAME),
 )
+
+login_manager = flask_login.LoginManager()
+login_manager.init_app(app)
+
+users = {'foo@bar.tld': {'password': 'secret', 'name': 'RS Bisht'}}
+
+
+class User(flask_login.UserMixin):
+    pass
+
+
+@login_manager.user_loader
+def user_loader(email):
+    if email not in users:
+        return
+
+    user = User()
+    user.id = email
+    return user
+
+
+@login_manager.request_loader
+def request_loader(request):
+    email = request.form.get('email')
+    if email not in users:
+        return
+
+    user = User()
+    user.id = email
+
+    # DO NOT ever store passwords in plaintext and always compare password
+    # hashes using constant-time comparison!
+    user.is_authenticated = request.form['password'] == users[email]['password']
+
+    return user
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'GET':
+        return '''
+               <form action='login' method='POST' style="align: center">
+                <input type='text' name='email' id='email' placeholder='email'/>
+                <input type='password' name='password' id='password' placeholder='password'/>
+                <input type='submit' name='submit'/>
+               </form>
+               '''
+
+    email = request.form['email']
+    if email in users:
+        if request.form['password'] == users[email]['password']:
+            user = User()
+            user.id = email
+            flask_login.login_user(user)
+            return redirect(url_for('protected'))
+    else:
+        return 'Email ID not present in the Directory.'
+
+    return 'Bad login'
+
+@app.route('/protected')
+@flask_login.login_required
+def protected():
+    return 'Logged in as: ' + flask_login.current_user.id + '<br>' + \
+        '<a href="/logout">Logout</a>' + \
+            '<br>' + \
+                '<a href="/">Dashboard</a>'
+
+
+@app.route('/logout')
+def logout():
+    flask_login.logout_user()
+    return 'Logged out'
+
+
+@login_manager.unauthorized_handler
+def unauthorized_handler():
+    return '''<h1 style="align:text-align: center;">Unauthorized<h1>
+            <a href="{url}">Login</a>'''.format(url=url_for('login'))
+
 
 # listing views
 link = {x: x for x in ["location", "product", "movement"]}
@@ -66,6 +147,7 @@ def init_database():
 
 
 @app.route('/')
+@flask_login.login_required
 def summary():
     init_database()
     msg = None
@@ -90,6 +172,7 @@ def summary():
 
 
 @app.route('/product', methods=['POST', 'GET'])
+@flask_login.login_required
 def product():
     init_database()
     msg = None
@@ -128,6 +211,7 @@ def product():
 
 
 @app.route('/location', methods=['POST', 'GET'])
+@flask_login.login_required
 def location():
     init_database()
     msg = None
@@ -164,6 +248,7 @@ def location():
 
 
 @app.route('/movement', methods=['POST', 'GET'])
+@flask_login.login_required
 def movement():
     init_database()
     msg = None
@@ -314,6 +399,7 @@ def movement():
 
 
 @app.route('/delete')
+@flask_login.login_required
 def delete():
     type_ = request.args.get('type')
     db = sqlite3.connect(DATABASE_NAME)
@@ -360,6 +446,7 @@ def delete():
 
 
 @app.route('/edit', methods=['POST', 'GET'])
+@flask_login.login_required
 def edit():
     type_ = request.args.get('type')
     db = sqlite3.connect(DATABASE_NAME)
