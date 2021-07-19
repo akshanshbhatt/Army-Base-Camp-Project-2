@@ -72,6 +72,7 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav mr-auto bg-dark alert-light">{{ title }}</ul>
+                <i><b style="font-weight: bold;color: crimson;">[Current User: {{ current_user.id }}]</Current></b></i>
                 <div class="col-auto">
                   <button type="button" class="btn btn-primary" onclick="location.reload();location.href='{{ link.index }}'">Summary</button>
                 </div>
