@@ -80,7 +80,7 @@ def login():
 @app.route('/protected')
 @flask_login.login_required
 def protected():
-    return 'Logged in as: ' + flask_login.current_user.id + '<br>' + \
+    return 'Logged in as: ' + flask_login.current_user.id + "   [Name: %s]" % users[f'{flask_login.current_user.id}']['name'] + '<br>' + \
         '<a href="/logout">Logout</a>' + \
             '<br>' + \
                 '<a href="/">Dashboard</a>'
